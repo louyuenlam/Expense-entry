@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Roydfield">
+<meta name="theme-color" content="#faf6eb">
+<link rel="apple-touch-icon" href="./icon.png">
+<link rel="icon" type="image/png" href="./icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Roydfield</title>
+<style>
+:root {
+  --bg: #faf6eb;
+  --surface: #ffffff;
+  --surface-dim: #f3eedf;
+  --border: #e4dcc6;
+  --accent: #c9a800;
+  --accent-dark: #9e8400;
+  --ink: #2e2608;
+  --ink-muted: #9e8e50;
+  --ink-mid: #7a6a30;
+  --income: #5a8a00;
+  --expense: #c44e1a;
+  --shadow: 0 1px 4px rgba(46,38,8,.06), 0 2px 12px rgba(46,38,8,.04);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { background:var(--bg); background-image:radial-gradient(ellipse at 10% 10%, rgba(201,168,0,.08), transparent 60%), radial-gradient(ellipse at 90% 90%, rgba(90,138,0,.05), transparent 60%); color:var(--ink); font-family:'Manrope',sans-serif; font-size:15px; min-height:100vh; min-height:100dvh; -webkit-user-select:none; user-select:none; overscroll-behavior:none; }
+input, select { -webkit-user-select:text; user-select:text; font-family:'Manrope',sans-serif; }
+
+.app { max-width:520px; margin:0 auto; padding:calc(var(--safe-top) + 16px) 20px calc(var(--safe-bottom) + 20px); }
+.header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; }
+.brand { font-family:'Fraunces',serif; font-size:22px; font-weight:600; letter-spacing:-0.5px; line-height:1; }
+.brand em { font-style:italic; font-weight:500; color:var(--accent-dark); }
+.header-right { text-align:right; }
+.header-date { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--ink-muted); }
+.header-date .day { font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:12px; text-transform:none; letter-spacing:0; color:var(--accent-dark); }
+.sync-indicator { font-size:10px; color:var(--ink-muted); margin-top:4px; cursor:pointer; }
+.sync-dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+.sync-dot.ok { background:var(--income); }
+.sync-dot.pending { background:var(--accent); animation:pulse 1.5s infinite; }
+.sync-dot.off { background:var(--ink-muted); }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.4} }
+
+.card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:20px; box-shadow:var(--shadow); }
+.card-title { font-family:'Fraunces',serif; font-size:17px; font-weight:600; margin-bottom:16px; }
+.card-title em { font-style:italic; font-weight:500; color:var(--accent-dark); }
+
+.field { margin-bottom:14px; }
+.field label { display:block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--ink-muted); margin-bottom:5px; }
+.field label .hint { font-weight:400; text-transform:none; letter-spacing:0; }
+.field input, .field select { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--surface-dim); font-size:15px; color:var(--ink); outline:none; -webkit-appearance:none; appearance:none; min-height:44px; transition:border-color .15s; }
+.field input:focus, .field select:focus { border-color:var(--accent); }
+.field select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239e8e50' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:36px; }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+.type-row { display:flex; gap:6px; margin-bottom:14px; }
+.type-pill { flex:1; padding:11px; border:1px solid var(--border); border-radius:10px; background:var(--surface); text-align:center; font-weight:600; font-size:14px; color:var(--ink-muted); cursor:pointer; transition:all .15s; }
+.type-pill.expense.on { background:linear-gradient(135deg, rgba(196,78,26,.08), white); color:var(--expense); border-color:var(--expense); }
+.type-pill.income.on { background:linear-gradient(135deg, rgba(90,138,0,.08), white); color:var(--income); border-color:var(--income); }
+
+.cat-wrap { display:flex; flex-wrap:wrap; gap:7px; padding:4px 0; max-height:160px; overflow-y:auto; }
+.chip { padding:8px 14px; border-radius:999px; border:1px solid var(--border); background:var(--surface); font-size:12px; font-weight:500; color:var(--ink-mid); cursor:pointer; transition:all .12s; }
+.chip.on { background:var(--accent-dark); border-color:var(--accent-dark); color:var(--bg); }
+
+.btn-add { width:100%; padding:14px; background:var(--accent-dark); color:white; border:none; border-radius:10px; font-family:'Manrope',sans-serif; font-size:15px; font-weight:700; cursor:pointer; margin-top:4px; letter-spacing:.3px; }
+.btn-add:active { opacity:.8; }
+
+.toast { position:fixed; bottom:calc(var(--safe-bottom) + 24px); left:50%; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:12px 24px; border-radius:999px; font-weight:600; font-size:13px; z-index:9999; box-shadow:0 4px 20px rgba(0,0,0,.2); animation:slideUp .3s ease; white-space:nowrap; }
+@keyframes slideUp { from { transform:translateX(-50%) translateY(80px); opacity:0; } }
+.flash { position:fixed; inset:0; background:rgba(90,138,0,.08); z-index:998; pointer-events:none; animation:flashAnim .5s ease; }
+@keyframes flashAnim { 0%{opacity:1}100%{opacity:0} }
+
+.footer { margin-top:16px; text-align:center; }
+.footer a { font-size:12px; color:var(--ink-muted); text-decoration:none; padding:8px 16px; }
+
+.settings-overlay { display:none; position:fixed; inset:0; background:rgba(46,38,8,.4); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:1000; justify-content:center; align-items:flex-end; }
+.settings-panel { background:var(--bg); border-radius:18px 18px 0 0; padding:24px 20px calc(var(--safe-bottom) + 24px); width:100%; max-width:520px; max-height:80vh; overflow-y:auto; animation:slidePanel .3s ease; }
+@keyframes slidePanel { from { transform:translateY(100%); } }
+.settings-title { font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; }
+.settings-title em { font-style:italic; font-weight:500; color:var(--accent-dark); }
+.settings-close { background:none; border:none; font-size:22px; color:var(--ink-muted); cursor:pointer; padding:4px 8px; }
+.s-section { margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--border); }
+.s-section:last-child { border-bottom:none; margin-bottom:0; }
+.s-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--ink-muted); margin-bottom:8px; }
+.s-btn { width:100%; padding:12px; border:1px solid var(--border); border-radius:10px; background:var(--surface); font-family:'Manrope',sans-serif; font-size:13px; font-weight:600; color:var(--ink-mid); cursor:pointer; margin-bottom:8px; text-align:center; }
+.s-btn:active { background:var(--surface-dim); }
+.s-btn.danger { border-color:var(--expense); color:var(--expense); }
+.s-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; font-size:13px; color:var(--ink-mid); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand">Royd<em>field.</em></div>
+    <div class="header-right">
+      <div class="header-date"><div id="h-month"></div><div class="day" id="h-day"></div></div>
+      <div class="sync-indicator" id="sync-badge" onclick="openSettings()"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Quick <em>add</em></div>
+    <div class="type-row">
+      <div class="type-pill expense on" id="t-exp" onclick="setType('expense')">Expense</div>
+      <div class="type-pill income" id="t-inc" onclick="setType('income')">Income</div>
+    </div>
+    <div class="field"><label>Description</label><input type="text" id="qa-desc" placeholder="e.g. Costco, Salary..." autocomplete="off"></div>
+    <div class="row2">
+      <div class="field"><label>Amount (£)</label><input type="number" id="qa-amt" placeholder="0.00" inputmode="decimal" step="0.01"></div>
+      <div class="field"><label>Date</label><input type="date" id="qa-date"></div>
+    </div>
+    <div class="row2" id="qa-paidby-row">
+      <div class="field"><label>Paid by</label><select id="qa-paidby"><option value="">—</option><option>Jessica</option><option>Amus</option><option>House</option></select></div>
+      <div class="field"><label>Payment</label><select id="qa-pay"><option value="">—</option><option>Lloyds Mastercard</option><option>Lloyds Current</option><option>Chase</option><option>Starling</option><option>Cash</option></select></div>
+    </div>
+    <div class="field"><label>Category</label><div class="cat-wrap" id="qa-cats"></div></div>
+    <div class="field"><label>Note <span class="hint">(optional)</span></label><input type="text" id="qa-note" placeholder="Any details..." autocomplete="off"></div>
+    <button class="btn-add" onclick="addTx()">+ Add Transaction</button>
+  </div>
+  <div class="footer"><a href="#" onclick="openSettings();return false">⚙️ Settings</a></div>
+</div>
+
+<div class="settings-overlay" id="settings-overlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-panel">
+    <div class="settings-title"><span>Set<em>tings</em></span><button class="settings-close" onclick="closeSettings()">✕</button></div>
+    <div class="s-section">
+      <div class="s-label">Google Sheets Sync</div>
+      <div class="field" style="margin-bottom:8px"><input type="url" id="gs-url" placeholder="Paste Apps Script URL..." autocomplete="off" style="font-size:13px"></div>
+      <button class="s-btn" onclick="saveGSUrl()">💾 Save URL</button>
+      <button class="s-btn" onclick="testSync()">🧪 Test Connection</button>
+      <button class="s-btn" onclick="syncNow()">🔄 Sync Now</button>
+      <div class="s-row"><span>Status</span><span id="sync-status"></span></div>
+      <div class="s-row"><span>Pending</span><span id="sync-pending">0</span></div>
+    </div>
+    <div class="s-section">
+      <div class="s-label">Backup</div>
+      <button class="s-btn" onclick="exportJSON()">⬇ Export JSON</button>
+      <button class="s-btn" onclick="copyJSON()">📋 Copy to Clipboard</button>
+      <label class="s-btn" style="cursor:pointer;display:block">⬆ Import JSON<input type="file" accept=".json" onchange="importJSON(event)" style="display:none"></label>
+      <div class="s-row"><span>Entries</span><span id="s-count">0</span></div>
+      <div class="s-row"><span>Last updated</span><span id="s-updated">—</span></div>
+    </div>
+    <div class="s-section">
+      <div class="s-label" style="color:var(--expense)">Danger Zone</div>
+      <button class="s-btn danger" onclick="resetAll()">↺ Reset All Data</button>
+    </div>
+    <div style="text-align:center;font-size:10px;color:var(--ink-muted);padding-top:4px">Roydfield Mobile v1.0</div>
+  </div>
+</div>
+
+<script>
+const CATS={expense:["Food & Dining","Groceries","Transport","Housing","Utilities","Entertainment","Health","Shopping","Other","Insurance","Pet","Personal Care","Subscription","Household","Investment","Savings","Petrol","Car","Parking","Car Maintenance","Medical for Parents","Yard Sale Expense","Holiday"],income:["Salary","Freelance","Investment","Gift","Other Income","Insurance Claim","Dividend","Yard Sale/ Car Boot"]};
+let state={transactions:[],lastUpdated:null,pendingSync:[]};
+let currentType='expense';
+const SK='roydfieldMobile_v1',GK='roydfieldGSUrl_v1';
+
+function el(id){return document.getElementById(id)}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function getCats(t){return Array.isArray(t.cat)?t.cat:t.cat?[t.cat]:[]}
+function fmt(n){return '£'+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+
+function loadState(){try{const r=localStorage.getItem(SK);if(r)state=JSON.parse(r)}catch(e){}if(!state.transactions)state.transactions=[];if(!state.pendingSync)state.pendingSync=[]}
+function saveState(){state.lastUpdated=new Date().toISOString();try{localStorage.setItem(SK,JSON.stringify(state))}catch(e){}updateBadge()}
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+function flash(){const d=document.createElement('div');d.className='flash';document.body.appendChild(d);setTimeout(()=>d.remove(),500)}
+
+function updateHeader(){const n=new Date();const M=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];const D=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];el('h-month').textContent=M[n.getMonth()]+' '+n.getFullYear();el('h-day').textContent=D[n.getDay()]+', '+n.getDate()}
+function updateBadge(){const u=localStorage.getItem(GK)||'';const p=state.pendingSync.length;if(!u)el('sync-badge').innerHTML='<span class="sync-dot off"></span>Offline';else if(p>0)el('sync-badge').innerHTML='<span class="sync-dot pending"></span>'+p+' pending';else el('sync-badge').innerHTML='<span class="sync-dot ok"></span>Synced'}
+
+function setType(t){currentType=t;el('t-exp').classList.toggle('on',t==='expense');el('t-inc').classList.toggle('on',t==='income');el('qa-paidby-row').style.display=t==='expense'?'':'none';renderCats()}
+function renderCats(){el('qa-cats').innerHTML=(CATS[currentType]||[]).map(c=>'<div class="chip" onclick="this.classList.toggle(\'on\')" data-cat="'+c+'">'+c+'</div>').join('')}
+
+function addTx(){
+  const desc=el('qa-desc').value.trim(),amount=parseFloat(el('qa-amt').value),date=el('qa-date').value;
+  const cats=[...el('qa-cats').querySelectorAll('.chip.on')].map(c=>c.dataset.cat);
+  const note=el('qa-note').value.trim();
+  if(!desc||isNaN(amount)||!date){toast('Fill in description, amount & date');return}
+  if(!cats.length){toast('Select a category');return}
+  const tx={id:Date.now(),type:currentType,desc,amount,date,cat:cats.length===1?cats[0]:cats,note,paidBy:currentType==='expense'?(el('qa-paidby').value||''):'',payMethod:currentType==='expense'?(el('qa-pay').value||''):''};
+  state.transactions.push(tx);state.transactions.sort((a,b)=>b.date.localeCompare(a.date));
+  state.pendingSync.push(tx);saveState();autoSync(tx);
+  el('qa-desc').value='';el('qa-amt').value='';el('qa-note').value='';
+  el('qa-cats').querySelectorAll('.chip.on').forEach(c=>c.classList.remove('on'));
+  flash();toast('✓ '+desc+' — '+fmt(amount));
+  setTimeout(()=>el('qa-desc').focus(),300);
+}
+
+async function autoSync(tx){const u=localStorage.getItem(GK)||'';if(!u)return;try{const cats=getCats(tx);const row={date:tx.date,description:tx.desc,type:tx.type,category:cats.join(', '),amount:tx.type==='expense'?-tx.amount:tx.amount,note:tx.note||'',paidBy:tx.paidBy||'',payMethod:tx.payMethod||'',id:String(tx.id)};const r=await fetch(u,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'addRow',data:row})});if(r.ok){state.pendingSync=state.pendingSync.filter(t=>t.id!==tx.id);saveState()}}catch(e){}}
+async function syncNow(){const u=localStorage.getItem(GK)||'';if(!u){toast('Set up URL first');return}if(!state.pendingSync.length){toast('All synced ✓');return}toast('Syncing '+state.pendingSync.length+'...');for(const tx of[...state.pendingSync])await autoSync(tx);toast('✓ Synced');updateBadge();renderSettingsInfo()}
+async function testSync(){const u=localStorage.getItem(GK)||'';if(!u){toast('Enter URL first');return}try{const r=await fetch(u+'?action=ping');if(r.ok){const d=await r.json();toast('✓ Connected: '+d.rows+' rows')}else toast('✗ Failed')}catch(e){toast('✗ Error')}}
+function saveGSUrl(){const u=el('gs-url').value.trim();if(!u){toast('Enter a URL');return}localStorage.setItem(GK,u);toast('✓ URL saved');updateBadge();renderSettingsInfo()}
+
+function openSettings(){el('gs-url').value=localStorage.getItem(GK)||'';renderSettingsInfo();el('settings-overlay').style.display='flex'}
+function closeSettings(){el('settings-overlay').style.display='none'}
+function renderSettingsInfo(){const u=localStorage.getItem(GK)||'';const p=state.pendingSync.length;el('sync-status').innerHTML=u?(p>0?'<span class="sync-dot pending"></span>Pending':'<span class="sync-dot ok"></span>Connected'):'<span class="sync-dot off"></span>Not set up';el('sync-pending').textContent=p;el('s-count').textContent=state.transactions.length;el('s-updated').textContent=state.lastUpdated?new Date(state.lastUpdated).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'—'}
+
+function exportJSON(){const j=JSON.stringify(state,null,2);try{const b=new Blob([j],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='roydfield-mobile-'+todayKey()+'.json';document.body.appendChild(a);a.click();document.body.removeChild(a);toast('⬇ Exported')}catch(e){copyJSON()}}
+function copyJSON(){navigator.clipboard.writeText(JSON.stringify(state,null,2)).then(()=>toast('📋 Copied')).catch(()=>toast('Copy failed'))}
+function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(ev){try{const d=JSON.parse(ev.target.result);if(d.transactions){let a=0;const ids=new Set(state.transactions.map(t=>String(t.id)));d.transactions.forEach(t=>{if(!ids.has(String(t.id))){state.transactions.push(t);a++}});state.transactions.sort((a,b)=>b.date.localeCompare(a.date));saveState();toast('✓ Imported '+a+' new');closeSettings()}}catch(err){toast('Import failed')}};r.readAsText(f);e.target.value=''}
+function resetAll(){if(!confirm('Delete ALL mobile data?'))return;if(!confirm('Are you sure? Cannot be undone.'))return;state={transactions:[],lastUpdated:null,pendingSync:[]};saveState();toast('↺ Cleared');closeSettings()}
+
+function init(){loadState();updateHeader();el('qa-date').value=todayKey();renderCats();updateBadge()}
+document.addEventListener('DOMContentLoaded',init);
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+</script>
+</body>
+</html>
